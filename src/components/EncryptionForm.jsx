@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { encryptAES, decryptAES } from '../utils/aes';
 import { encryptDES, decryptDES } from '../utils/des';
 import { encryptChaCha20, decryptChaCha20 } from '../utils/chacha20';
@@ -21,26 +21,24 @@ const EncryptionForm = () => {
   const [steps, setSteps] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  
   /**
-   * Generates a secure random key for the selected algorithm on press and change
+   * Generates a secure random key for the selected algorithm
    */
-  const handleGenerateKey = async () => {
-    setLoading(true);
-    try {
-      const newKey = await generateSecureKey(algorithm);
-      setKey(newKey);
-    } catch (error) {
-      console.error('Error generating key:', error);
-      alert(`Failed to generate key: ${error.message}`);
-    }
-    setLoading(false);
-  };
-  
-  useEffect(() => {
+  const handleGenerateKey = useCallback(async () => {
+  setLoading(true);
+  try {
+    const newKey = await generateSecureKey(algorithm);
+    setKey(newKey);
+  } catch (error) {
+    console.error('Error generating key:', error);
+    alert(`Failed to generate key: ${error.message}`);
+  }
+  setLoading(false);
+}, [algorithm]);   
+
+useEffect(() => {
   handleGenerateKey();
-	}, [algorithm, handleGenerateKey]); 
-  
+}, [algorithm, handleGenerateKey]);
   /**
    * Derives a key from a password for the selected algorithm
    */
@@ -342,3 +340,4 @@ const EncryptionForm = () => {
 };
 
 export default EncryptionForm;
+
